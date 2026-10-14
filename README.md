@@ -21,5 +21,8 @@ Download the installer and run it. Windows may show “Windows protected your PC
 
 Some conversions (Word, Excel, PowerPoint) and “Edit as document” use Microsoft Office if it's installed.
 
+## Made by
+Designed and built by **Yash**.
+
 ## Licences
 Free to use. Built with open-source software — see [licenses.html](licenses.html).
