@@ -1,0 +1,25 @@
+# Glass Document Generator
+
+A free Windows app for everyday documents — create from polished templates, edit any PDF, recognise text on scanned pages, convert files, and draw Gantt charts and flowcharts. Works offline; your files never leave your PC.
+
+**Website:** https://design-santosh.github.io/glass-document-generator/
+**Download:** [Glass-Document-Generator-Setup.exe](https://github.com/Design-Santosh/glass-document-generator/releases/latest/download/Glass-Document-Generator-Setup.exe) (Windows 10 & 11, 64-bit)
+
+![Glass Document Generator](img/home.webp)
+
+## Features
+- 14 document templates plus a blank page — reports, letters, invoices, minutes, CVs, proposals, manuals, test reports and more
+- Edit PDFs: change existing text, add text, highlights, boxes, pictures and signatures, fill forms, reorder pages
+- OCR for scanned PDFs, offline
+- Convert between Word, PDF, Excel, PowerPoint, pictures, web pages, Markdown and text
+- Gantt chart maker with phases, milestones and dependencies
+- Flowchart maker (Mermaid) with a visual style editor
+- Themes and gradient colour palettes
+
+## Installing
+Download the installer and run it. Windows may show “Windows protected your PC” because the app isn't signed with a paid certificate yet — click **More info → Run anyway**.
+
+Some conversions (Word, Excel, PowerPoint) and “Edit as document” use Microsoft Office if it's installed.
+
+## Licences
+Free to use. Built with open-source software — see [licenses.html](licenses.html).

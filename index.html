@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glass Document Generator — free document, PDF, Gantt and flowchart app for Windows</title>
+<meta name="description" content="A free Windows app to create beautiful documents from templates, edit any PDF, read scanned pages, convert files, and draw Gantt charts and flowcharts. Works offline.">
+<meta property="og:title" content="Glass Document Generator">
+<meta property="og:description" content="Documents, PDF editing, OCR, conversion, Gantt charts and flowcharts — in one free, offline Windows app.">
+<meta property="og:image" content="img/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#070B09">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070B09; --bg2:#0B120F; --ink:#ECF3EF; --muted:#9AAFA5; --dim:#6B7F76;
+  --glass:rgba(255,255,255,.045); --glass2:rgba(255,255,255,.07); --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --accent:#10B981; --accent-ink:#6EE7B7; --accent-deep:#047857; --gold:#E8B93F; --gold-ink:#F5D27A;
+  --r:22px; --ease:cubic-bezier(.22,.85,.25,1); --spring:linear(0, .062 4.4%, .231 9.3%, .469 15%, .723 21.9%, .876 27.6%, .977 33.6%, 1.03 39.4%, 1.051 44.8%, 1.05 51.4%, 1.031 59.4%, 1.008 70.2%, .998 82.2%, 1);
+  --serif:"Fraunces", Georgia, serif; --sans:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif; --mono:"IBM Plex Mono", ui-monospace, monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%;}
+body{margin:0; background:var(--bg); color:var(--ink); font:400 16px/1.6 var(--sans); overflow-x:hidden; -webkit-font-smoothing:antialiased;}
+img{max-width:100%; display:block;}
+a{color:inherit; text-decoration:none;}
+::selection{background:rgba(16,185,129,.35);}
+.wrap{width:min(1180px, 100% - 32px); margin-inline:auto;}
+
+/* ---------- drifting light behind everything ---------- */
+.aurora{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;}
+.aurora i{position:absolute; border-radius:50%; filter:blur(90px); opacity:.55; will-change:transform;}
+.aurora i:nth-child(1){width:620px; height:620px; left:-160px; top:-180px; background:radial-gradient(circle, rgba(16,185,129,.55), transparent 65%); animation:drift1 26s ease-in-out infinite alternate;}
+.aurora i:nth-child(2){width:520px; height:520px; right:-140px; top:18vh; background:radial-gradient(circle, rgba(232,185,63,.32), transparent 65%); animation:drift2 32s ease-in-out infinite alternate;}
+.aurora i:nth-child(3){width:700px; height:700px; left:30vw; bottom:-380px; background:radial-gradient(circle, rgba(4,120,87,.5), transparent 65%); animation:drift3 38s ease-in-out infinite alternate;}
+@keyframes drift1{to{transform:translate3d(180px,120px,0) scale(1.15);}}
+@keyframes drift2{to{transform:translate3d(-160px,140px,0) scale(.9);}}
+@keyframes drift3{to{transform:translate3d(-120px,-160px,0) scale(1.1);}}
+.grain{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ---------- top bar ---------- */
+.nav{position:fixed; top:14px; left:50%; translate:-50% 0; z-index:50; width:min(1180px, 100% - 24px);
+  display:flex; align-items:center; gap:18px; padding:10px 10px 10px 18px; border-radius:18px;
+  background:rgba(10,16,13,.55); border:1px solid var(--line); backdrop-filter:blur(22px) saturate(170%); -webkit-backdrop-filter:blur(22px) saturate(170%);
+  transition:padding .4s var(--ease), background .4s, box-shadow .4s;}
+.nav.scrolled{background:rgba(8,13,11,.78); box-shadow:0 18px 40px rgba(0,0,0,.35);}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.01em; white-space:nowrap;}
+.brand img{width:30px; height:30px; border-radius:9px;}
+.nav nav{display:flex; gap:4px; margin-left:auto;}
+.nav nav a{padding:8px 12px; border-radius:10px; color:var(--muted); font-size:14.5px; font-weight:500; transition:color .2s, background .2s;}
+.nav nav a:hover{color:var(--ink); background:var(--glass2);}
+.brand .bs{display:none;}
+@media (max-width:820px){ .nav nav{display:none;} .nav .btn{margin-left:auto;} }
+@media (max-width:520px){ .brand .bn{display:none;} .brand .bs{display:inline;} .nav{padding:8px 8px 8px 12px;} .nav .btn{padding:10px 14px; font-size:14px;} }
+
+/* ---------- buttons with the glow that follows the pointer ---------- */
+.btn{position:relative; isolation:isolate; overflow:hidden; display:inline-flex; align-items:center; gap:10px; padding:12px 20px; border-radius:14px;
+  font:600 15px/1 var(--sans); border:1px solid var(--line2); background:var(--glass2); color:var(--ink); cursor:pointer;
+  transition:transform .45s var(--spring), box-shadow .35s var(--ease), border-color .25s;}
+.btn svg{width:18px; height:18px; flex:none;}
+.btn .lt{position:absolute; inset:0; z-index:-1; opacity:0; transition:opacity .35s ease-out; border-radius:inherit; pointer-events:none; overflow:hidden;}
+.btn .lt::before{content:""; position:absolute; width:220px; height:220px; left:var(--x, 50%); top:var(--y, 50%); translate:-50% -50%; border-radius:50%;
+  background:radial-gradient(circle closest-side, rgba(255,255,255,.45), transparent);}
+.btn .gl{position:absolute; inset:0; z-index:-1; opacity:0; transition:opacity .4s ease-out; pointer-events:none; border-radius:inherit;
+  background:radial-gradient(70% 60% at 50% 120%, rgba(232,185,63,.8), transparent 72%);}
+.btn:hover .lt, .btn:hover .gl{opacity:1;}
+.btn:hover{transform:translateY(-2px); border-color:rgba(255,255,255,.28);}
+.btn:active{transform:translateY(0) scale(.97); transition-duration:.1s;}
+.btn.primary{border-color:transparent; color:#03241A; background:linear-gradient(135deg, #34D399, var(--accent) 45%, var(--accent-deep));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 10px 30px rgba(16,185,129,.28);}
+.btn.primary:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 14px 36px rgba(16,185,129,.45), 0 0 34px rgba(16,185,129,.4);}
+.btn.big{padding:17px 26px; font-size:17px; border-radius:16px;}
+.btn.big svg{width:20px; height:20px;}
+.btn .sub{display:block; font:500 12px/1.2 var(--sans); opacity:.75; margin-top:4px;}
+.ring{position:absolute; left:var(--x); top:var(--y); width:10px; height:10px; translate:-50% -50%; border-radius:50%; border:2px solid rgba(255,255,255,.8); pointer-events:none; animation:ring .7s var(--ease) forwards;}
+@keyframes ring{to{width:260px; height:260px; opacity:0; border-width:1px;}}
+
+/* ---------- hero ---------- */
+.hero{padding:150px 0 40px; text-align:center; position:relative;}
+.pill{display:inline-flex; align-items:center; gap:8px; padding:7px 14px 7px 8px; border-radius:99px; background:var(--glass); border:1px solid var(--line); font-size:13.5px; color:var(--muted);}
+.pill b{padding:3px 9px; border-radius:99px; background:rgba(16,185,129,.16); color:var(--accent-ink); font-weight:600; font-size:12px;}
+h1{font:700 clamp(40px, 7.4vw, 86px)/1.02 var(--serif); letter-spacing:-.025em; margin:22px auto 0; max-width:12.5em;}
+h1 .ln{display:block;}
+.grad{background:linear-gradient(100deg, var(--accent-ink) 0%, #A7F3D0 30%, var(--gold-ink) 62%, var(--gold) 100%); -webkit-background-clip:text; background-clip:text; color:transparent;
+  background-size:200% 100%; animation:sheen 9s ease-in-out infinite alternate;}
+@keyframes sheen{to{background-position:100% 0;}}
+.lede{max-width:640px; margin:22px auto 0; color:var(--muted); font-size:clamp(16px, 2vw, 19px);}
+.cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:34px;}
+.meta{margin-top:16px; color:var(--dim); font-size:13.5px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+.meta span{display:inline-flex; align-items:center; gap:6px;}
+.meta span::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent);}
+
+/* a crisp sweep reveal: nothing is scaled, a bright line wipes the thing into view */
+.sweep{clip-path:inset(0 0 100% 0); position:relative;}
+.sweep.in{animation:sweepIn .9s var(--ease) forwards; animation-delay:var(--d, 0s);}
+@keyframes sweepIn{to{clip-path:inset(-20px -20px -20px -20px);}}
+.fade{opacity:0; translate:0 14px;}
+.fade.in{animation:fadeUp .8s var(--ease) forwards; animation-delay:var(--d, 0s);}
+@keyframes fadeUp{to{opacity:1; translate:0 0;}}
+
+/* ---------- the app window ---------- */
+.stage{perspective:1600px; margin:64px auto 0; width:min(1120px, 100% - 32px);}
+.win{position:relative; border-radius:18px; padding:10px; background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03)); border:1px solid var(--line2);
+  box-shadow:0 50px 120px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.4), 0 0 120px rgba(16,185,129,.12);
+  transform-origin:50% 0; transform:rotateX(var(--tilt, 22deg)) scale(var(--sc, .94)); will-change:transform;}
+.win::after{content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none; padding:1px;
+  background:linear-gradient(140deg, rgba(110,231,183,.55), transparent 30%, transparent 70%, rgba(232,185,63,.45)); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;}
+.bar{display:flex; align-items:center; gap:7px; padding:4px 6px 10px;}
+.bar i{width:11px; height:11px; border-radius:50%; background:#2A332F;}
+.bar i:nth-child(1){background:#F87171;} .bar i:nth-child(2){background:#FBBF24;} .bar i:nth-child(3){background:#34D399;}
+.tabs{display:flex; gap:4px; margin-left:16px; overflow:auto; scrollbar-width:none; position:relative;}
+.tabs button{all:unset; z-index:1; cursor:pointer; padding:6px 12px; border-radius:9px; font:500 13px var(--sans); color:var(--muted); position:relative; white-space:nowrap; transition:color .25s;}
+.tabs button.on{color:var(--ink);}
+.tabs .hl{position:absolute; top:0; left:0; height:100%; border-radius:9px; background:rgba(255,255,255,.08); box-shadow:inset 0 0 0 1px rgba(110,231,183,.25);
+  transition:transform .45s var(--spring), width .45s var(--spring); pointer-events:none;}
+.screen{position:relative; border-radius:10px; overflow:hidden; aspect-ratio:16/10; background:#0A0F0D;}
+.screen img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top left; clip-path:inset(0 0 0 100%);}
+.screen img.on{clip-path:inset(0 0 0 0); z-index:2;}
+.screen img.enter{z-index:3; animation:wipe .9s var(--ease) forwards;}
+@keyframes wipe{from{clip-path:inset(0 0 0 100%);} to{clip-path:inset(0 0 0 0);}}
+.screen .beam{position:absolute; top:0; bottom:0; width:2px; z-index:4; left:100%; opacity:0; pointer-events:none;
+  background:linear-gradient(180deg, transparent, var(--gold-ink), var(--accent-ink), transparent); box-shadow:0 0 24px 6px rgba(232,185,63,.45);}
+.screen .beam.go{animation:beam .9s var(--ease) forwards;}
+@keyframes beam{0%{left:100%; opacity:1;} 85%{opacity:1;} 100%{left:0; opacity:0;}}
+.prog{position:absolute; left:0; bottom:0; height:2px; z-index:5; background:linear-gradient(90deg, var(--accent), var(--gold)); width:0;}
+.prog.run{animation:prog var(--t, 5s) linear forwards;}
+@keyframes prog{to{width:100%;}}
+
+/* ---------- formats marquee ---------- */
+.marquee{margin:90px 0 0; overflow:hidden; -webkit-mask:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);}
+.marquee .track{display:flex; gap:14px; width:max-content; animation:marq 38s linear infinite;}
+.marquee:hover .track{animation-play-state:paused;}
+.chip{display:inline-flex; align-items:center; gap:9px; padding:10px 16px; border-radius:12px; background:var(--glass); border:1px solid var(--line); font:500 14px var(--sans); color:var(--muted); white-space:nowrap;}
+.chip b{font:600 11.5px var(--mono); padding:3px 7px; border-radius:6px; background:rgba(16,185,129,.14); color:var(--accent-ink);}
+.chip b.g{background:rgba(232,185,63,.14); color:var(--gold-ink);}
+@keyframes marq{to{transform:translateX(-50%);}}
+
+/* ---------- sections ---------- */
+section{padding:120px 0 0;}
+.eyebrow{font:600 12.5px/1 var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--gold);}
+h2{font:700 clamp(32px, 4.6vw, 54px)/1.06 var(--serif); letter-spacing:-.02em; margin:14px 0 0;}
+.head{text-align:center; max-width:760px; margin:0 auto;}
+.head p{color:var(--muted); font-size:18px; margin:18px auto 0;}
+
+/* feature rows */
+.row{display:grid; grid-template-columns:1fr 1.25fr; gap:56px; align-items:center; margin-top:110px;}
+.row.flip{grid-template-columns:1.25fr 1fr;}
+.row.flip .txt{order:2;}
+.txt h3{font:700 clamp(26px, 3vw, 36px)/1.12 var(--serif); letter-spacing:-.015em; margin:12px 0 0;}
+.txt p{color:var(--muted); font-size:17px; margin:16px 0 0;}
+.ticks{list-style:none; padding:0; margin:22px 0 0; display:grid; gap:10px;}
+.ticks li{display:flex; gap:10px; align-items:flex-start; color:#C9D6D0; font-size:15.5px;}
+.ticks li::before{content:""; flex:none; width:18px; height:18px; margin-top:3px; border-radius:6px; background:rgba(16,185,129,.16) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236EE7B7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/12px no-repeat;}
+.shot{position:relative; border-radius:16px; padding:8px; background:linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.025)); border:1px solid var(--line2); box-shadow:0 30px 80px rgba(0,0,0,.45);}
+.shot img{border-radius:10px; height:auto; aspect-ratio:16/10; object-fit:cover; object-position:top left; width:100%;}
+.shot .tag{position:absolute; right:-12px; bottom:28px; padding:10px 14px; border-radius:14px; background:rgba(10,16,13,.82); border:1px solid var(--line2); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  font:600 13.5px var(--sans); display:flex; align-items:center; gap:10px; box-shadow:0 16px 40px rgba(0,0,0,.4); animation:float 6s ease-in-out infinite;}
+.shot .tag em{font-style:normal; color:var(--accent-ink); font:600 18px var(--serif);}
+@keyframes float{50%{transform:translateY(-8px);}}
+.shot .line{position:absolute; left:0; right:0; height:2px; top:0; z-index:3; opacity:0; pointer-events:none; background:linear-gradient(90deg, transparent, var(--gold-ink), var(--accent-ink), transparent); box-shadow:0 0 20px 4px rgba(232,185,63,.4);}
+.sweep.in > .line{animation:lineDown .9s var(--ease) forwards; animation-delay:var(--d, 0s);}
+@keyframes lineDown{0%{top:0; opacity:1;} 85%{opacity:1;} 100%{top:100%; opacity:0;}}
+@media (max-width:900px){ .row, .row.flip{grid-template-columns:1fr; gap:30px; margin-top:80px;} .row.flip .txt{order:0;} .shot .tag{right:10px;} }
+
+/* bento of everything else, with a light that follows the pointer */
+.bento{display:grid; grid-template-columns:repeat(6, 1fr); gap:16px; margin-top:56px;}
+.card{grid-column:span 2; position:relative; padding:26px; border-radius:var(--r); background:var(--glass); border:1px solid var(--line); overflow:hidden; isolation:isolate;
+  transition:transform .5s var(--spring), border-color .3s;}
+.card.w3{grid-column:span 3;}
+.card::before{content:""; position:absolute; inset:0; z-index:-1; opacity:0; transition:opacity .4s; pointer-events:none;
+  background:radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(16,185,129,.16), transparent 60%);}
+.card::after{content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; pointer-events:none; opacity:0; transition:opacity .4s;
+  background:radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(110,231,183,.8), rgba(232,185,63,.35) 40%, transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;}
+.bento:hover .card::after, .card:hover::before{opacity:1;}
+.card:hover{transform:translateY(-4px);}
+.ic{width:44px; height:44px; border-radius:13px; display:grid; place-items:center; background:linear-gradient(140deg, rgba(16,185,129,.28), rgba(16,185,129,.06)); border:1px solid rgba(110,231,183,.22); color:var(--accent-ink);}
+.ic.g{background:linear-gradient(140deg, rgba(232,185,63,.28), rgba(232,185,63,.05)); border-color:rgba(245,210,122,.25); color:var(--gold-ink);}
+.ic svg{width:22px; height:22px;}
+.card h4{font:600 18px/1.3 var(--sans); margin:18px 0 0; letter-spacing:-.01em;}
+.card p{margin:8px 0 0; color:var(--muted); font-size:15px;}
+@media (max-width:900px){ .bento{grid-template-columns:1fr 1fr;} .card, .card.w3{grid-column:span 1;} }
+@media (max-width:560px){ .bento{grid-template-columns:1fr;} }
+
+/* numbers */
+.stats{display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-top:110px; padding:34px; border-radius:26px; background:var(--glass); border:1px solid var(--line); backdrop-filter:blur(20px);}
+.stat{text-align:center;}
+.stat b{display:block; font:700 clamp(36px, 5vw, 56px)/1 var(--serif); letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
+.stat b .u{color:var(--gold);}
+.stat > span{display:block; margin-top:10px; color:var(--muted); font-size:14.5px;}
+@media (max-width:760px){ .stats{grid-template-columns:1fr 1fr; gap:28px 12px;} }
+
+/* install steps */
+.steps{display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; margin-top:56px; position:relative;}
+.steps::before{content:""; position:absolute; left:8%; right:8%; top:34px; height:2px; background:var(--line); z-index:-1;}
+.steps .fill{position:absolute; left:8%; top:34px; height:2px; width:calc(84% * var(--p, 0)); background:linear-gradient(90deg, var(--accent), var(--gold)); box-shadow:0 0 14px rgba(16,185,129,.6); z-index:-1;}
+.step{padding:0 10px; text-align:center;}
+.num{width:68px; height:68px; margin:0 auto; border-radius:20px; display:grid; place-items:center; font:700 26px var(--serif); background:#0D1512; border:1px solid var(--line2); color:var(--accent-ink);
+  box-shadow:0 0 0 6px var(--bg); transition:box-shadow .5s, border-color .5s, color .5s;}
+.step.lit .num{border-color:rgba(110,231,183,.6); box-shadow:0 0 0 6px var(--bg), 0 0 30px rgba(16,185,129,.45); color:#fff;}
+.step h4{margin:18px 0 0; font:600 18px var(--sans);}
+.step p{margin:8px 0 0; color:var(--muted); font-size:15px;}
+.warn{margin:44px auto 0; max-width:860px; display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:center; padding:20px 22px; border-radius:18px;
+  background:linear-gradient(135deg, rgba(232,185,63,.10), rgba(232,185,63,.03)); border:1px solid rgba(232,185,63,.25);}
+.warn p{margin:0; color:#D9CFB6; font-size:15px;}
+.warn b{color:var(--gold-ink);}
+.kbd{display:inline-block; padding:1px 8px; border-radius:7px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); font:600 13px var(--sans); color:var(--ink);}
+@media (max-width:760px){ .steps{grid-template-columns:1fr; gap:34px;} .steps::before, .steps .fill{display:none;} .warn{grid-template-columns:1fr;} }
+
+/* FAQ */
+.faq{max-width:820px; margin:50px auto 0; display:grid; gap:12px;}
+details{border-radius:16px; background:var(--glass); border:1px solid var(--line); transition:border-color .3s, background .3s; interpolate-size:allow-keywords;}
+details[open]{border-color:rgba(110,231,183,.28); background:rgba(255,255,255,.06);}
+summary{list-style:none; cursor:pointer; padding:18px 22px; font:600 16.5px var(--sans); display:flex; justify-content:space-between; gap:16px; align-items:center;}
+summary::-webkit-details-marker{display:none;}
+summary::after{content:""; flex:none; width:22px; height:22px; border-radius:7px; background:rgba(255,255,255,.07) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236EE7B7' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/13px no-repeat; transition:transform .45s var(--spring);}
+details[open] summary::after{transform:rotate(135deg);}
+details::details-content{block-size:0; overflow:hidden; transition:block-size .45s var(--ease), content-visibility .45s allow-discrete;}
+details[open]::details-content{block-size:auto;}
+details .a{padding:0 22px 20px; color:var(--muted); font-size:15.5px;}
+details .a p{margin:0 0 10px;}
+
+/* final call */
+.final{margin-top:130px; position:relative; text-align:center; padding:80px 24px; border-radius:32px; overflow:hidden; isolation:isolate;
+  background:linear-gradient(160deg, rgba(16,185,129,.20), rgba(4,120,87,.10) 40%, rgba(232,185,63,.10)); border:1px solid rgba(110,231,183,.22);}
+.final::before{content:""; position:absolute; inset:-40%; z-index:-1; background:conic-gradient(from 0deg, transparent, rgba(16,185,129,.25), transparent 30%, rgba(232,185,63,.18), transparent 60%); animation:spin 18s linear infinite;}
+@keyframes spin{to{transform:rotate(1turn);}}
+.final::after{content:""; position:absolute; inset:1px; z-index:-1; border-radius:31px; background:rgba(8,13,11,.86);}
+.final h2{margin-top:10px;}
+.final p{color:var(--muted); max-width:560px; margin:16px auto 0; font-size:17px;}
+
+footer{margin-top:90px; padding:34px 0 46px; border-top:1px solid var(--line); color:var(--dim); font-size:14px;}
+footer .wrap{display:flex; gap:20px; justify-content:space-between; flex-wrap:wrap; align-items:center;}
+footer nav{display:flex; gap:18px; flex-wrap:wrap;}
+footer a:hover{color:var(--ink);}
+
+.mobile-note{display:none; margin-top:14px; color:var(--gold-ink); font-size:14px;}
+@media (max-width:760px){ .mobile-note{display:block;} .hero{padding-top:120px;} section{padding-top:90px;} }
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important;}
+  .sweep{clip-path:none;} .fade{opacity:1; translate:none;} .win{transform:none;}
+}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top"><img src="img/icon.png" alt=""><span class="bn">Glass Document Generator</span><span class="bs">Glass Docs</span></a>
+  <nav><a href="#features">Features</a><a href="#tools">Tools</a><a href="#install">Install</a><a href="#faq">FAQ</a></nav>
+  <a class="btn primary dl" href="#download" data-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download</a>
+</header>
+
+<main id="top">
+  <div class="hero wrap">
+    <div class="pill fade" style="--d:.05s"><b>Free</b> Windows 10 &amp; 11 · works offline · no account</div>
+    <h1><span class="ln sweep" style="--d:.15s">Every document,</span><span class="ln sweep grad" style="--d:.32s">beautifully done.</span></h1>
+    <p class="lede fade" style="--d:.55s">Write reports, letters and invoices from polished templates, edit any PDF, read scanned pages, convert files, and draw Gantt charts and flowcharts — all in one calm, fast app.</p>
+    <div class="cta fade" style="--d:.7s">
+      <a class="btn primary big dl" data-dl href="#download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span>Download for Windows<span class="sub" data-size>Version 1.0.0 · 105 MB</span></span></a>
+      <a class="btn big" href="#tools"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z" fill="currentColor"/></svg>See it in action</a>
+    </div>
+    <div class="meta fade" style="--d:.85s"><span>Your files stay on your PC</span><span>No ads, no sign-up</span><span>Free forever</span></div>
+    <p class="mobile-note">This is a Windows app — open this page on your PC to install it.</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="win" id="win">
+      <div class="bar"><i></i><i></i><i></i>
+        <div class="tabs" id="tabs" role="tablist">
+          <span class="hl" id="hl"></span>
+          <button class="on" data-i="0" role="tab">Templates</button><button data-i="1" role="tab">Editor</button><button data-i="2" role="tab">Edit PDF</button><button data-i="3" role="tab">Gantt</button><button data-i="4" role="tab">Flowchart</button><button data-i="5" role="tab">Themes</button>
+        </div>
+      </div>
+      <div class="screen" id="screen">
+        <img class="on" src="img/home.webp" alt="Home screen with document templates" width="2160" height="1350">
+        <img src="img/menu.webp" alt="The document editor with the Insert menu open" width="2160" height="1350">
+        <img src="img/pdf.webp" alt="Editing a PDF" width="2160" height="1350">
+        <img src="img/gantt.webp" alt="Gantt chart maker" width="2160" height="1350">
+        <img src="img/flow.webp" alt="Flowchart maker" width="2160" height="1350">
+        <img src="img/themes.webp" alt="Themes and colours" width="2160" height="1350">
+        <span class="beam" id="beam"></span><span class="prog" id="prog"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="marquee" aria-label="Supported formats"><div class="track" id="track">
+    <span class="chip"><b>DOCX</b>Word</span><span class="chip"><b class="g">PDF</b>Portable Document</span><span class="chip"><b>XLSX</b>Excel</span><span class="chip"><b class="g">PPTX</b>PowerPoint</span>
+    <span class="chip"><b>MD</b>Markdown</span><span class="chip"><b class="g">HTML</b>Web page</span><span class="chip"><b>PNG</b>Picture</span><span class="chip"><b class="g">JPG</b>Photo</span>
+    <span class="chip"><b>TXT</b>Plain text</span><span class="chip"><b class="g">CSV</b>Spreadsheet data</span><span class="chip"><b>SVG</b>Vector drawing</span><span class="chip"><b class="g">MMD</b>Mermaid</span>
+  </div></div>
+
+  <section id="features" class="wrap">
+    <div class="head">
+      <div class="eyebrow fade">What it does</div>
+      <h2 class="sweep">One app instead of five.</h2>
+      <p class="fade" style="--d:.1s">The everyday paperwork tools, made to feel good to use — and to look good when you share the result.</p>
+    </div>
+
+    <div class="row">
+      <div class="txt">
+        <div class="eyebrow fade">Documents</div>
+        <h3 class="sweep">Start from a template that already looks finished.</h3>
+        <p class="fade" style="--d:.1s">Reports, letters, invoices, meeting minutes, CVs, proposals, manuals, test reports and more. Type into it and it stays tidy: headings, tables, charts and page numbers sort themselves out.</p>
+        <ul class="ticks fade" style="--d:.2s"><li>14 ready-made templates, plus a blank page</li><li>Charts from tables, equations, footnotes, signatures</li><li>Save as PDF, Word, Markdown, text or a picture</li></ul>
+      </div>
+      <div class="shot sweep" style="--d:.1s"><span class="line"></span><img src="img/menu.webp" alt="Editor with the Insert menu" loading="lazy" width="2160" height="1350"><div class="tag"><em>14</em> templates</div></div>
+    </div>
+
+    <div class="row flip" id="tools">
+      <div class="txt">
+        <div class="eyebrow fade">Edit PDF</div>
+        <h3 class="sweep">Change the words already in a PDF.</h3>
+        <p class="fade" style="--d:.1s">Open any PDF and fix a typo in the original text — it keeps the same font and position. Add text, highlights, boxes, pictures and your signature, fill forms, and reorder pages by dragging.</p>
+        <ul class="ticks fade" style="--d:.2s"><li>Recognise text on scanned pages (OCR), offline</li><li>Turn a PDF into an editable document</li><li>Merge PDFs and add blank pages</li></ul>
+      </div>
+      <div class="shot sweep" style="--d:.1s"><span class="line"></span><img src="img/pdf.webp" alt="PDF editor" loading="lazy" width="2160" height="1350"><div class="tag"><em>OCR</em> built in</div></div>
+    </div>
+
+    <div class="row">
+      <div class="txt">
+        <div class="eyebrow fade">Gantt charts</div>
+        <h3 class="sweep">Plan a project in minutes.</h3>
+        <p class="fade" style="--d:.1s">Type tasks into the table or paste them from Excel. Drag bars to move them, drag an end to change the length — later tasks follow along. Phases, milestones, owners and progress are all there.</p>
+        <ul class="ticks fade" style="--d:.2s"><li>Days, weeks or months · working days only</li><li>Export as a picture or PDF</li><li>Drop the chart straight into a document</li></ul>
+      </div>
+      <div class="shot sweep" style="--d:.1s"><span class="line"></span><img src="img/gantt.webp" alt="Gantt chart" loading="lazy" width="2160" height="1350"><div class="tag"><em>60</em> fps dragging</div></div>
+    </div>
+
+    <div class="row flip">
+      <div class="txt">
+        <div class="eyebrow fade">Flowcharts</div>
+        <h3 class="sweep">Write it as text, see it as a diagram.</h3>
+        <p class="fade" style="--d:.1s">Describe the steps in simple Mermaid text — or click to add steps, decisions and links — and the flowchart draws itself. Then style it: shapes, colours, gradients and shadows.</p>
+        <ul class="ticks fade" style="--d:.2s"><li>Click a box to find it in the text, double-click to rename</li><li>Document, Glass and Plain looks</li><li>Export as PNG, SVG or PDF</li></ul>
+      </div>
+      <div class="shot sweep" style="--d:.1s"><span class="line"></span><img src="img/flow.webp" alt="Flowchart maker" loading="lazy" width="2160" height="1350"><div class="tag"><em>Mermaid</em> powered</div></div>
+    </div>
+
+    <div class="stats" id="stats">
+      <div class="stat"><b><span data-count="14">0</span></b><span>document templates</span></div>
+      <div class="stat"><b><span data-count="12">0</span><span class="u">+</span></b><span>file formats</span></div>
+      <div class="stat"><b><span data-count="100">0</span><span class="u">%</span></b><span>offline &amp; private</span></div>
+      <div class="stat"><b><span class="u">₹</span><span data-count="0">0</span></b><span>free, forever</span></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="head">
+      <div class="eyebrow fade">And more</div>
+      <h2 class="sweep">Small things, done well.</h2>
+    </div>
+    <div class="bento" id="bento">
+      <div class="card w3 fade"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v6h6"/><path d="M20 20v-6h-6"/><path d="M5.5 15a7 7 0 0 0 12.4 2M18.5 9A7 7 0 0 0 6.1 7"/></svg></div><h4>Convert anything</h4><p>Drop in Word, Excel, PowerPoint, PDF, pictures or web pages and pick what they should become. Nothing is overwritten.</p></div>
+      <div class="card w3 fade" style="--d:.08s"><div class="ic g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18" fill="currentColor" opacity=".35"/></svg></div><h4>Themes &amp; colours</h4><p>Emerald Glass, Light, Midnight or Ivory — with 11 gradient colours or your own. Your PDF matches what you see.</p></div>
+      <div class="card fade"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h4>Password protect</h4><p>Lock a document with a password before you send it.</p></div>
+      <div class="card fade" style="--d:.06s"><div class="ic g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div><h4>Never lose work</h4><p>Changes are kept automatically, with drafts you can restore.</p></div>
+      <div class="card fade" style="--d:.12s"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19l4-1 10-10-3-3L5 15z"/><path d="M14 6l3 3"/></svg></div><h4>Sign anywhere</h4><p>Draw your signature once and place it in documents and PDFs.</p></div>
+      <div class="card fade"><div class="ic g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/><path d="M17 15l2 2 3-4"/></svg></div><h4>Checklists &amp; status</h4><p>Tickable lists and PASS / FAIL / PENDING badges for reviews.</p></div>
+      <div class="card fade" style="--d:.06s"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h4>Smooth everywhere</h4><p>Crisp, gentle motion that never blurs your text.</p></div>
+      <div class="card fade" style="--d:.12s"><div class="ic g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><h4>Private by design</h4><p>No account, no cloud, no tracking. Your files never leave your PC.</p></div>
+    </div>
+  </section>
+
+  <section id="install" class="wrap">
+    <div class="head">
+      <div class="eyebrow fade">Install</div>
+      <h2 class="sweep">Up and running in a minute.</h2>
+    </div>
+    <div class="steps" id="steps"><span class="fill" id="fill"></span>
+      <div class="step"><div class="num">1</div><h4>Download</h4><p>Get the installer — one file, about 105 MB.</p></div>
+      <div class="step"><div class="num">2</div><h4>Run it</h4><p>Choose where to install, then press <span class="kbd">Install</span>.</p></div>
+      <div class="step"><div class="num">3</div><h4>Start creating</h4><p>Open it from the Start menu or the desktop shortcut.</p></div>
+    </div>
+    <div class="warn fade">
+      <div class="ic g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M12 8v4M12 16h.01"/></svg></div>
+      <p><b>Seeing “Windows protected your PC”?</b> That's normal for new free apps that aren't signed with a paid certificate yet. Click <span class="kbd">More info</span>, then <span class="kbd">Run anyway</span>. The app keeps your files on your PC and doesn't change your system settings.</p>
+    </div>
+  </section>
+
+  <section id="faq" class="wrap">
+    <div class="head">
+      <div class="eyebrow fade">Questions</div>
+      <h2 class="sweep">Good to know.</h2>
+    </div>
+    <div class="faq">
+      <details class="fade"><summary>Is it really free?</summary><div class="a"><p>Yes. No trial, no subscription, no ads and no sign-up.</p></div></details>
+      <details class="fade"><summary>Does it need the internet?</summary><div class="a"><p>No. Everything — including text recognition on scanned PDFs and flowchart drawing — runs on your PC. Your documents are never uploaded anywhere.</p></div></details>
+      <details class="fade"><summary>Do I need Microsoft Office?</summary><div class="a"><p>Not for most things. Creating documents, editing PDFs, OCR, Gantt charts, flowcharts and exporting to PDF, Word, Markdown or pictures all work without it.</p><p>Converting Word, Excel or PowerPoint files, and “Edit as document” for PDFs, use Microsoft Office if it's installed on your PC.</p></div></details>
+      <details class="fade"><summary>Which Windows versions does it run on?</summary><div class="a"><p>Windows 10 and Windows 11, 64-bit.</p></div></details>
+      <details class="fade"><summary>Why does Windows warn me when I install it?</summary><div class="a"><p>Windows shows a SmartScreen warning for apps that aren't signed with a paid code-signing certificate. Click <b>More info → Run anyway</b> to continue.</p></div></details>
+      <details class="fade"><summary>How do I uninstall it?</summary><div class="a"><p>Settings → Apps → Installed apps → Glass Document Generator → Uninstall. Your documents are kept.</p></div></details>
+    </div>
+  </section>
+
+  <section class="wrap" id="download">
+    <div class="final">
+      <div class="eyebrow fade">Free download</div>
+      <h2 class="sweep">Make your next document <span class="grad">the nice one.</span></h2>
+      <p class="fade">Windows 10 &amp; 11 · 64-bit · works offline</p>
+      <div class="cta fade" style="--d:.1s"><a class="btn primary big dl" data-dl href="#download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span>Download for Windows<span class="sub" data-size>Version 1.0.0 · 105 MB</span></span></a></div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <span>© <span id="yr">2026</span> Glass Document Generator · free to use</span>
+  <nav><a href="licenses.html">Open-source licences</a><a data-repo href="#">Source &amp; releases</a><a href="#faq">Help</a></nav>
+</div></footer>
+
+<script>
+(function(){
+  // where the installer lives (GitHub Releases always serves the newest file at this address)
+  var REPO = "Design-Santosh/glass-document-generator";
+  var FILE = "Glass-Document-Generator-Setup.exe";
+  var url = "https://github.com/" + REPO + "/releases/latest/download/" + FILE;
+  document.querySelectorAll("[data-dl]").forEach(function(a){ a.href = url; a.setAttribute("download", ""); });
+  document.querySelectorAll("[data-repo]").forEach(function(a){ a.href = "https://github.com/" + REPO + "/releases"; });
+  document.getElementById("yr").textContent = new Date().getFullYear();
+
+  var calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // the top bar settles once you scroll
+  var nav = document.getElementById("nav");
+  function onScroll(){ nav.classList.toggle("scrolled", scrollY > 30); }
+  addEventListener("scroll", onScroll, {passive: true}); onScroll();
+
+  // buttons: a light that follows the pointer, a gold glow from below, a ring on click
+  document.querySelectorAll(".btn").forEach(function(b){
+    var lt = document.createElement("span"); lt.className = "lt"; var gl = document.createElement("span"); gl.className = "gl";
+    b.insertBefore(gl, b.firstChild); b.insertBefore(lt, b.firstChild);
+    b.addEventListener("pointermove", function(e){ var r = b.getBoundingClientRect(); lt.style.setProperty("--x", (e.clientX - r.left) + "px"); lt.style.setProperty("--y", (e.clientY - r.top) + "px"); });
+    b.addEventListener("pointerdown", function(e){ if (calm) return; var r = b.getBoundingClientRect(), ring = document.createElement("span"); ring.className = "ring";
+      ring.style.setProperty("--x", (e.clientX - r.left) + "px"); ring.style.setProperty("--y", (e.clientY - r.top) + "px"); b.appendChild(ring); setTimeout(function(){ ring.remove(); }, 750); });
+  });
+
+  // things sweep or fade in as they come into view
+  // (checked by position: a fully clipped element has no visible area, so an IntersectionObserver would never see it)
+  var pending = [].slice.call(document.querySelectorAll(".sweep, .fade")), rTick = false;
+  function reveal(){ rTick = false; var vh = innerHeight;
+    pending = pending.filter(function(el){ var r = el.getBoundingClientRect(); if (r.top < vh * .9 && r.bottom > 0){ el.classList.add("in"); return false; } return true; }); }
+  addEventListener("scroll", function(){ if (!rTick && pending.length){ rTick = true; requestAnimationFrame(reveal); } }, {passive: true});
+  addEventListener("resize", reveal); reveal();
+
+  // the app window leans back, then straightens as you scroll to it
+  var win = document.getElementById("win"), stage = document.getElementById("stage"), ticking = false;
+  function tilt(){ ticking = false; var r = stage.getBoundingClientRect(), vh = innerHeight;
+    var p = Math.min(1, Math.max(0, (vh - r.top) / (vh * .75)));
+    var e = 1 - Math.pow(1 - p, 3);
+    win.style.setProperty("--tilt", (22 * (1 - e)).toFixed(2) + "deg"); win.style.setProperty("--sc", (.94 + .06 * e).toFixed(4)); }
+  if (!calm){ addEventListener("scroll", function(){ if (!ticking){ ticking = true; requestAnimationFrame(tilt); } }, {passive: true}); tilt(); }
+
+  // the window cycles through the app's screens; the tabs can be clicked
+  var imgs = [].slice.call(document.querySelectorAll("#screen img")), tabs = [].slice.call(document.querySelectorAll("#tabs button")), hl = document.getElementById("hl");
+  var beam = document.getElementById("beam"), prog = document.getElementById("prog"), cur = 0, timer = 0, HOLD = 5200;
+  function place(){ var t = tabs[cur]; hl.style.width = t.offsetWidth + "px"; hl.style.transform = "translateX(" + (t.offsetLeft - tabs[0].offsetLeft) + "px)"; hl.style.left = tabs[0].offsetLeft + "px"; }
+  function show(i, user){
+    if (i === cur){ return; }
+    var prev = imgs[cur], next = imgs[i]; cur = i;
+    tabs.forEach(function(t, k){ t.classList.toggle("on", k === i); }); place();
+    next.classList.remove("enter"); void next.offsetWidth; next.classList.add("enter");
+    beam.classList.remove("go"); void beam.offsetWidth; if (!calm) beam.classList.add("go");
+    setTimeout(function(){ prev.classList.remove("on"); next.classList.add("on"); next.classList.remove("enter"); }, calm ? 0 : 900);
+    run(user ? HOLD * 1.6 : HOLD);
+  }
+  function run(t){ clearTimeout(timer); prog.classList.remove("run"); void prog.offsetWidth; prog.style.setProperty("--t", t + "ms"); prog.classList.add("run");
+    timer = setTimeout(function(){ show((cur + 1) % imgs.length); }, t); }
+  tabs.forEach(function(t){ t.addEventListener("click", function(){ show(+t.dataset.i, true); }); });
+  // only cycle while the window is on screen
+  new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) run(HOLD); else { clearTimeout(timer); prog.classList.remove("run"); } }); }, {threshold: .3}).observe(win);
+  addEventListener("resize", place); (document.fonts ? document.fonts.ready : Promise.resolve()).then(place); place();
+
+  // the formats list loops forever: draw it twice
+  var track = document.getElementById("track"); track.innerHTML += track.innerHTML;
+
+  // cards: a light follows the pointer over the grid
+  var bento = document.getElementById("bento");
+  bento.addEventListener("pointermove", function(e){ bento.querySelectorAll(".card").forEach(function(c){ var r = c.getBoundingClientRect(); c.style.setProperty("--mx", (e.clientX - r.left) + "px"); c.style.setProperty("--my", (e.clientY - r.top) + "px"); }); });
+
+  // numbers count up the first time they are seen
+  var stats = document.getElementById("stats");
+  new IntersectionObserver(function(es, ob){ es.forEach(function(e){ if (!e.isIntersecting) return; ob.disconnect();
+    stats.querySelectorAll("[data-count]").forEach(function(el){ var to = +el.dataset.count, t0 = performance.now(), d = calm ? 1 : 1400;
+      (function step(n){ var p = Math.min(1, (n - t0) / d), v = Math.round(to * (1 - Math.pow(1 - p, 4))); el.textContent = v; if (p < 1) requestAnimationFrame(step); })(t0); }); }); }, {threshold: .5}).observe(stats);
+
+  // install steps: a line fills and the numbers light up as you scroll
+  var steps = document.getElementById("steps"), fill = document.getElementById("fill"), st = [].slice.call(steps.querySelectorAll(".step")), sTick = false;
+  function stepFill(){ sTick = false; var r = steps.getBoundingClientRect(), vh = innerHeight; var p = Math.min(1, Math.max(0, (vh * .8 - r.top) / (vh * .45)));
+    fill.style.setProperty("--p", p.toFixed(3)); st.forEach(function(s, i){ s.classList.toggle("lit", p >= i / 2 - .001 && p > 0); }); }
+  addEventListener("scroll", function(){ if (!sTick){ sTick = true; requestAnimationFrame(stepFill); } }, {passive: true}); stepFill();
+})();
+</script>
+</body>
+</html>
