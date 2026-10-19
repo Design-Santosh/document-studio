@@ -2,8 +2,8 @@
 
 A free Windows app for everyday documents — create from polished templates, edit any PDF, recognise text on scanned pages, convert files, and draw Gantt charts and flowcharts. Works offline; your files never leave your PC.
 
-**Website:** https://design-santosh.github.io/document-studio/
-**Download:** [Document-Studio-Setup.exe](https://github.com/Design-Santosh/document-studio/releases/latest/download/Document-Studio-Setup.exe) (Windows 10 & 11, 64-bit)
+**Website:** https://designyash.github.io/document-studio/
+**Download:** [Document-Studio-Setup.exe](https://github.com/DesignYash/document-studio/releases/latest/download/Document-Studio-Setup.exe) (Windows 10 & 11, 64-bit)
 
 ![Document Studio](img/home.webp)
 
