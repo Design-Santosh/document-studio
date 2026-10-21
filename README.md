@@ -2,8 +2,8 @@
 
 A free Windows app for everyday documents — create from polished templates, edit any PDF, recognise text on scanned pages, convert files, and draw Gantt charts and flowcharts. Works offline; your files never leave your PC.
 
+**Get it free on the Microsoft Store:** https://apps.microsoft.com/detail/9PN0DFDW0H8D
 **Website:** https://designyash.github.io/document-studio/
-**Download:** [Document-Studio-Setup.exe](https://github.com/DesignYash/document-studio/releases/latest/download/Document-Studio-Setup.exe) (Windows 10 & 11, 64-bit)
 
 ![Document Studio](img/home.webp)
 
@@ -17,7 +17,7 @@ A free Windows app for everyday documents — create from polished templates, ed
 - Themes and gradient colour palettes
 
 ## Installing
-Download the installer and run it. Windows may show “Windows protected your PC” because the app isn't signed with a paid certificate yet — click **More info → Run anyway**.
+Open the [Microsoft Store page](https://apps.microsoft.com/detail/9PN0DFDW0H8D) and press **Get**. Updates install automatically.
 
 Some conversions (Word, Excel, PowerPoint) and “Edit as document” use Microsoft Office if it's installed.
 
