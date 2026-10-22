@@ -706,9 +706,9 @@ h1 .shine::after{content:""; position:absolute; top:-10%; bottom:-10%; left:0; w
 @media (min-width:980px){ .bookwrap{display:block;} #features > .row{display:none;} }
 
 /* the fanned deck */
-.fan{position:relative; height:480px; margin-top:30px; display:none; --sp:3.6deg; --lift:0px; cursor:pointer; touch-action:pan-y;}
+.fan{position:relative; height:480px; margin-top:30px; display:block; --cw:250px; --sp:3.6deg; --lift:0px; cursor:pointer; touch-action:pan-y;}
 .fan.open{--sp:5.4deg; --lift:-14px;}
-.tc2{all:unset; cursor:pointer; position:absolute; left:50%; bottom:70px; width:250px; margin-left:-125px; transform-origin:50% 330%; z-index:var(--z);
+.tc2{all:unset; cursor:pointer; position:absolute; left:50%; bottom:70px; width:var(--cw); margin-left:calc(var(--cw) / -2); transform-origin:50% 330%; z-index:var(--z);
   transform:rotate(calc(var(--n) * var(--sp) + var(--push, 0deg))) translate3d(0,var(--lift),0); transition:transform .6s cubic-bezier(.2,.85,.25,1.04); will-change:transform; pointer-events:none;}
 .tc2 .pg{border-radius:14px; overflow:hidden; background:#fff; border:1px solid var(--line2); box-shadow:0 10px 30px rgba(15,31,25,.14); transition:transform .45s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;}
 .tc2 .pg img{display:block; width:100%; height:auto; aspect-ratio:760/490; object-fit:cover; object-position:top left;}
@@ -719,7 +719,9 @@ h1 .shine::after{content:""; position:absolute; top:-10%; bottom:-10%; left:0; w
 .fan.dealt.settled .tc2{transition-delay:0s;}
 .fanname{position:absolute; left:50%; bottom:6px; translate:-50% 0; text-align:center; pointer-events:none;}
 .fanname b{display:block; font:700 20px var(--serif);} .fanname span{display:block; font-size:13.5px; color:var(--muted); margin-top:2px;}
-@media (min-width:900px){ .fan{display:block;} .fan ~ .gal{display:none;} }
+.fan ~ .gal{display:none;}
+@media (max-width:899px){ .fan{height:270px; --cw:150px; --sp:2.4deg; margin-top:-30px;} .fan.open{--sp:2.8deg; --lift:-6px;} .tc2{bottom:78px;} .fanname{bottom:0;}
+  .tc2.hot .pg, .tc2:focus-visible .pg{transform:translate3d(0,-30px,0) scale(1.16);} .fanname b{font-size:17px;} .fanname span{font-size:12.5px;} }
 
 /* the desk */
 .desk-sec{padding-top:120px;}
@@ -883,6 +885,10 @@ html{background:var(--bg);} body{background:transparent;}
 footer{background:none; border-top:1px solid var(--line);}
 ::-webkit-scrollbar-thumb{border-color:var(--bg);}
 
+@media (max-width:899px), (pointer:coarse){ .marquee .track, h1 .shine::after, .halo::before, .avatar, .avatar::after, .tabs .live, .pl-live span, .shot .tag, .ip .tag, .core::after, .final::before, .grad, .sheet .fold{animation:none !important;}
+  .aurora i{animation:none !important;} .fl{animation:flIn 1s var(--ease) both !important;} .store::after{display:none;} }
+.nav [data-get]{margin-left:auto;}
+@media (min-width:861px){ .nav [data-get]{margin-left:0;} }
 /* colour picker */
 .pick{position:relative;}
 .pick > button{all:unset; cursor:pointer; width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:var(--paper); border:1px solid var(--line2); transition:transform .45s var(--spring), border-color .25s;}
@@ -1016,12 +1022,12 @@ footer{background:none; border-top:1px solid var(--line);}
           </div>
           <i class="pl-cur" id="plCur" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 2l15 10-7 1.4 4.2 7.8-3 1.6-4.2-7.8L4 19z" fill="#0F1F19" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></i>
         </div>
-        <img src="img/home.webp" alt="Home screen with document templates" width="2160" height="1350">
-        <img src="img/menu.webp" alt="The document editor with the Insert menu open" width="2160" height="1350">
-        <img src="img/pdf.webp" alt="Editing a PDF" width="2160" height="1350">
-        <img src="img/gantt.webp" alt="Gantt chart maker" width="2160" height="1350">
-        <img src="img/flow.webp" alt="Flowchart maker" width="2160" height="1350">
-        <img src="img/themes.webp" alt="Themes and colours" width="2160" height="1350">
+        <img src="img/home.webp" srcset="img/sm/home.webp 1200w, img/home.webp 2160w" sizes="(max-width:760px) 100vw, 1100px" alt="Home screen with document templates" width="2160" height="1350">
+        <img src="img/menu.webp" srcset="img/sm/menu.webp 1200w, img/menu.webp 2160w" sizes="(max-width:760px) 100vw, 1100px" alt="The document editor with the Insert menu open" width="2160" height="1350">
+        <img src="img/pdf.webp" srcset="img/sm/pdf.webp 1200w, img/pdf.webp 2160w" sizes="(max-width:760px) 100vw, 1100px" alt="Editing a PDF" width="2160" height="1350">
+        <img src="img/gantt.webp" srcset="img/sm/gantt.webp 1200w, img/gantt.webp 2160w" sizes="(max-width:760px) 100vw, 1100px" alt="Gantt chart maker" width="2160" height="1350">
+        <img src="img/flow.webp" srcset="img/sm/flow.webp 1200w, img/flow.webp 2160w" sizes="(max-width:760px) 100vw, 1100px" alt="Flowchart maker" width="2160" height="1350">
+        <img src="img/themes.webp" srcset="img/sm/themes.webp 1200w, img/themes.webp 2160w" sizes="(max-width:760px) 100vw, 1100px" alt="Themes and colours" width="2160" height="1350">
         <span class="beam" id="beam"></span><span class="prog" id="prog"></span>
       </div>
     </div>
@@ -1086,12 +1092,12 @@ footer{background:none; border-top:1px solid var(--line);}
     <div class="head">
       <div class="eyebrow rv">Templates</div>
       <h2 class="rv" style="--d:.08s">Start from something <span class="grad">already beautiful.</span></h2>
-      <p class="rv" style="--d:.16s">14 ready-made templates and a blank page. Hover to peek, click to look closer.</p>
+      <p class="rv" style="--d:.16s">14 ready-made templates. Point at or slide across the cards to peek — click or tap to open one.</p>
     </div>
 
     <div class="fan" id="fan" aria-label="Templates">
       <button class="tc2" type="button" data-k="report" data-name="Report" data-desc="Cover, contents, chart" style="--n:-6.5; --z:0; --d2:0"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/report.webp" alt="Report template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="letter" data-name="Letter" data-desc="Formal business letter" style="--n:-5.5; --z:1; --d2:1"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/letter.webp" alt="Letter template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="memo" data-name="Memo" data-desc="Internal note" style="--n:-4.5; --z:2; --d2:2"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/memo.webp" alt="Memo template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="minutes" data-name="Meeting minutes" data-desc="Attendees, decisions, actions" style="--n:-3.5; --z:3; --d2:3"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/minutes.webp" alt="Meeting minutes template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="proposal" data-name="Proposal / quotation" data-desc="Scope, pricing, terms" style="--n:-2.5; --z:4; --d2:4"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/proposal.webp" alt="Proposal / quotation template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="invoice" data-name="Invoice" data-desc="Totals worked out for you" style="--n:-1.5; --z:5; --d2:5"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/invoice.webp" alt="Invoice template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="sop" data-name="SOP / work instruction" data-desc="Step-by-step procedure" style="--n:-0.5; --z:6; --d2:6"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/sop.webp" alt="SOP / work instruction template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="manual" data-name="User manual" data-desc="Setup, use, troubleshooting" style="--n:0.5; --z:7; --d2:7"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/manual.webp" alt="User manual template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="plan" data-name="Project plan" data-desc="Milestones, risks, owners" style="--n:1.5; --z:8; --d2:8"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/plan.webp" alt="Project plan template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="cv" data-name="CV / résumé" data-desc="Profile, experience, skills" style="--n:2.5; --z:9; --d2:9"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/cv.webp" alt="CV / résumé template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="test" data-name="Test report" data-desc="Environment, test cases, results" style="--n:3.5; --z:10; --d2:10"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/test.webp" alt="Test report template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="review" data-name="Review record" data-desc="Findings, severity, status" style="--n:4.5; --z:11; --d2:11"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/review.webp" alt="Review record template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="checklist" data-name="Verification checklist" data-desc="Tickable items" style="--n:5.5; --z:12; --d2:12"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/checklist.webp" alt="Verification checklist template" loading="lazy" width="760" height="490"></div></button><button class="tc2" type="button" data-k="spec" data-name="Specification" data-desc="Requirements &amp; verification" style="--n:6.5; --z:13; --d2:13"><div class="pg"><img decoding="async" fetchpriority="low" src="img/tpl/spec.webp" alt="Specification template" loading="lazy" width="760" height="490"></div></button>
-      <div class="fanname" id="fanname"><b>Pick a card</b><span>Hover to spread them out, click to open one</span></div>
+      <div class="fanname" id="fanname"><b>Pick a card</b><span>Slide across the cards, then click or tap one</span></div>
     </div>
     <div class="gal rv" style="--d:.2s">
       <div class="row" id="galrow">
@@ -1364,7 +1370,7 @@ footer{background:none; border-top:1px solid var(--line);}
 
   // ----- top bar -----
   var nav = document.getElementById("nav");
-  function onScroll(){ nav.classList.toggle("scrolled", scrollY > 30); }
+  var navS = null; function onScroll(){ var v = scrollY > 30; if (v !== navS){ navS = v; nav.classList.toggle("scrolled", v); } }
   addEventListener("scroll", onScroll, {passive: true}); onScroll();
 
   // ----- buttons: light follows the pointer, ring on click -----
@@ -1377,11 +1383,8 @@ footer{background:none; border-top:1px solid var(--line);}
 
   // ----- reveals by position (a hidden element has no area, so this is checked by scroll position) -----
   document.querySelectorAll(".hero .rv").forEach(function(el){ el.classList.add("in"); });   // the opening screen always plays in full
-  var pending = [].slice.call(document.querySelectorAll(".rv:not(.in)")), rTick = false;
-  function reveal(){ rTick = false; var vh = innerHeight;
-    pending = pending.filter(function(el){ var r = el.getBoundingClientRect(); if (r.top < vh * .9 && r.bottom > 0){ el.classList.add("in"); return false; } return true; }); }
-  addEventListener("scroll", function(){ if (!rTick && pending.length){ rTick = true; requestAnimationFrame(reveal); } }, {passive: true});
-  addEventListener("resize", reveal); reveal();
+  var rio = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add("in"); rio.unobserve(e.target); } }); }, {rootMargin: "0px 0px -10% 0px"});
+  document.querySelectorAll(".rv:not(.in)").forEach(function(el){ rio.observe(el); });
 
   // ----- floating cards drift with the mouse -----
   var fls = [].slice.call(document.querySelectorAll(".fl"));
@@ -1391,11 +1394,12 @@ footer{background:none; border-top:1px solid var(--line);}
   }, {passive: true});
 
   // ----- the app window straightens as you scroll, and leans towards the mouse -----
+  var PHONE = matchMedia("(pointer: coarse)").matches || innerWidth < 760;
   var win = document.getElementById("win"), stage = document.getElementById("stage"), wTick = false;
   function tilt(){ wTick = false; var r = stage.getBoundingClientRect(), vh = innerHeight;
     var p = Math.min(1, Math.max(0, (vh - r.top) / (vh * .75))), e = 1 - Math.pow(1 - p, 3);
     win.style.transform = "rotateX(" + (20 * (1 - e)).toFixed(2) + "deg) scale(" + (.95 + .05 * e).toFixed(4) + ")"; }
-  if (!calm){ addEventListener("scroll", function(){ if (!wTick){ wTick = true; requestAnimationFrame(tilt); } }, {passive: true}); tilt(); }
+  if (!calm && !PHONE){ addEventListener("scroll", function(){ if (!wTick){ wTick = true; requestAnimationFrame(tilt); } }, {passive: true}); tilt(); } else win.style.transform = "none";
 
   // ----- screenshots tilt in 3D under the mouse -----
   if (fine && !calm) document.querySelectorAll("[data-tilt]").forEach(function(el){
@@ -1554,7 +1558,7 @@ footer{background:none; border-top:1px solid var(--line);}
 
   // ===== v14: the document story =====
   // hero sheet tips back as you scroll down to the app window
-  (function(){ var sh = document.getElementById("sheet"); if (!sh || calm) return; var tk = false, done = false;
+  (function(){ var sh = document.getElementById("sheet"); if (!sh || calm || matchMedia("(pointer: coarse)").matches || innerWidth < 760) return; var tk = false, done = false;
     sh.addEventListener("animationend", function(){ done = true; sh.style.animation = "none"; upd(); }, {once: true});
     function upd(){ tk = false; if (!done) return; var p = Math.min(1, Math.max(0, scrollY / (innerHeight * .8))), e = p * p * (3 - 2 * p);
       sh.style.transform = e ? "perspective(1400px) translate3d(0," + (e * 90).toFixed(1) + "px,0) rotateX(" + (e * 32).toFixed(2) + "deg) scale(" + (1 - e * .1).toFixed(4) + ")" : "";
@@ -1562,7 +1566,7 @@ footer{background:none; border-top:1px solid var(--line);}
     addEventListener("scroll", function(){ if (!tk){ tk = true; requestAnimationFrame(upd); } }, {passive: true}); })();
 
   // the book: pages turn with the scroll
-  (function(){ var wrap = document.getElementById("bookwrap"); if (!wrap) return;
+  (function(){ var wrap = document.getElementById("bookwrap"); if (!wrap || getComputedStyle(wrap).display === "none") return;
     var leaves = [].slice.call(wrap.querySelectorAll(".leaf")), dots = [].slice.call(document.querySelectorAll("#bookdots i")), tk = false, cur = -1;
     var ips = [leaves[0].querySelector(".front .ip"), leaves[1].querySelector(".front .ip"), leaves[2].querySelector(".front .ip"), wrap.querySelector(".bpage.right .ip")];
     function ss(x){ x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
@@ -1584,16 +1588,18 @@ footer{background:none; border-top:1px solid var(--line);}
     function setHot(i){ if (i === hot) return; hot = i;
       cards.forEach(function(c, k){ c.classList.toggle("hot", k === i); c.style.setProperty("--push", i < 0 || k === i ? "0deg" : (k < i ? -1 : 1) * Math.max(0, 6 - Math.abs(k - i) * 1.4) + "deg"); });
       nm.innerHTML = i < 0 ? def : "<b>" + cards[i].dataset.name + "</b><span>" + cards[i].dataset.desc + "</span>"; }
-    function pick(){ raf = 0; var e = ev2, c0 = cards[0], fr = fan.getBoundingClientRect(), sp = parseFloat(getComputedStyle(fan).getPropertyValue("--sp")) || 5.4;
-      var px = fr.left + fr.width / 2, py = fr.top + c0.offsetTop + c0.offsetHeight * 3.3, dx = e.clientX - px, dy = py - e.clientY, dist = Math.sqrt(dx * dx + dy * dy);
+    function pickAt(x, y){ var c0 = cards[0], fr = fan.getBoundingClientRect(), sp = parseFloat(getComputedStyle(fan).getPropertyValue("--sp")) || 5.4;
+      var px = fr.left + fr.width / 2, py = fr.top + c0.offsetTop + c0.offsetHeight * 3.3, dx = x - px, dy = py - y, dist = Math.sqrt(dx * dx + dy * dy);
       var inner = c0.offsetHeight * 2.3 - 30, outer = c0.offsetHeight * 3.3 + 90;
-      if (dist < inner || dist > outer){ setHot(-1); return; }
-      var ang = Math.atan2(dx, dy) * 180 / Math.PI, i = Math.round(ang / sp + (N - 1) / 2);
-      setHot(i >= 0 && i < N ? i : -1); }
+      if (dist < inner || dist > outer) return -1;
+      var i = Math.round(Math.atan2(dx, dy) * 180 / Math.PI / sp + (N - 1) / 2); return i >= 0 && i < N ? i : -1; }
+    function pick(){ raf = 0; setHot(pickAt(ev2.clientX, ev2.clientY)); }
     fan.addEventListener("pointerenter", function(){ fan.classList.add("open"); });
+    fan.addEventListener("pointerdown", function(e){ fan.classList.add("open"); ev2 = e; pick(); }, {passive: true});
     fan.addEventListener("pointermove", function(e){ ev2 = e; if (!raf) raf = requestAnimationFrame(pick); }, {passive: true});
-    fan.addEventListener("pointerleave", function(){ fan.classList.remove("open"); setHot(-1); });
-    fan.addEventListener("click", function(e){ if (hot >= 0) openTpl(cards[hot].dataset.k, cards[hot]); else if (e.target.closest(".tc2")) openTpl(e.target.closest(".tc2").dataset.k, e.target.closest(".tc2")); });
+    fan.addEventListener("pointerleave", function(e){ if (e.pointerType === "touch") return; fan.classList.remove("open"); setHot(-1); });
+    document.addEventListener("pointerdown", function(e){ if (e.pointerType === "touch" && !fan.contains(e.target)){ fan.classList.remove("open"); setHot(-1); } }, {passive: true});
+    fan.addEventListener("click", function(e){ var i = pickAt(e.clientX, e.clientY); if (i < 0) i = hot; if (i >= 0){ setHot(i); openTpl(cards[i].dataset.k, cards[i]); } });
     cards.forEach(function(c, k){ c.addEventListener("focus", function(){ setHot(k); }); c.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); openTpl(c.dataset.k, c); } }); });
   })();
 
@@ -1607,7 +1613,7 @@ footer{background:none; border-top:1px solid var(--line);}
 
   // ===== v6: water at the bottom of the hero — ripples follow the cursor =====
   (function(){
-    var cv = document.getElementById("water"); if (!cv || calm) return; var cx = cv.getContext("2d"), dpr = 1, grads = null, W = 0, H = 0, N = 0, pts = [], vel = [], raf = 0, vis = true, lastX = null, small = innerWidth < 760;
+    var cv = document.getElementById("water"); if (!cv || calm) return; if (matchMedia("(pointer: coarse)").matches || innerWidth < 760){ cv.style.display = "none"; return; } var cx = cv.getContext("2d"), dpr = 1, grads = null, W = 0, H = 0, N = 0, pts = [], vel = [], raf = 0, vis = true, lastX = null, small = innerWidth < 760;
     function size(){ var r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); grads = null; N = Math.ceil(W / (small ? 24 : 18)) + 1; pts = new Array(N).fill(0); vel = new Array(N).fill(0); }
     size(); addEventListener("resize", size);
     function disturb(clientX, clientY, dx){
@@ -1644,7 +1650,8 @@ footer{background:none; border-top:1px solid var(--line);}
   // flowing aurora (WebGL), drawn at half resolution, paused when off screen
   (function(){
     var cv = document.getElementById("aura"); if (!cv || calm) return;
-    var small = matchMedia("(pointer: coarse)").matches || innerWidth < 760;   // phones: lighter settings, same look
+    if (matchMedia("(pointer: coarse)").matches || innerWidth < 760){ cv.style.display = "none"; return; }   // phones: skip the moving aurora
+    var small = false;
     var gl = cv.getContext("webgl", {premultipliedAlpha: false, antialias: false, alpha: true}); if (!gl) return;
     var vs = "attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }";
     var fs = "precision mediump float; uniform vec2 r; uniform float t; uniform vec3 a; uniform vec3 g; uniform vec2 m;" +
@@ -1738,7 +1745,7 @@ footer{background:none; border-top:1px solid var(--line);}
   new IntersectionObserver(function(es, ob){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add("lit"); ob.disconnect(); } }); }, {threshold: .5}).observe(document.getElementById("stats"));
   // gentle sparkles drifting up in the hero (paused when not visible)
   (function(){
-    var cv = document.getElementById("sparks"); if (!cv || calm) return; var cx = cv.getContext("2d"), dots = [], raf = 0, vis = true, W = 0, H = 0, dpr = Math.min(2, devicePixelRatio || 1);
+    var cv = document.getElementById("sparks"); if (!cv || calm) return; if (matchMedia("(pointer: coarse)").matches || innerWidth < 760){ cv.style.display = "none"; return; } var cx = cv.getContext("2d"), dots = [], raf = 0, vis = true, W = 0, H = 0, dpr = Math.min(2, devicePixelRatio || 1);
     function size(){ var r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
     function mk(y){ return {x: Math.random() * W, y: y == null ? Math.random() * H : y, r: .8 + Math.random() * 2.2, v: .12 + Math.random() * .32, a: 0, t: Math.random() * 6.28, g: Math.random() < .35}; }
     size(); for (var i = 0; i < 38; i++) dots.push(mk());
@@ -1760,7 +1767,8 @@ footer{background:none; border-top:1px solid var(--line);}
   var fineP = matchMedia("(pointer: fine)").matches;
   // reading progress line
   var progEl = document.getElementById("progress"), pTick = false;
-  function progUpd(){ pTick = false; var h = document.documentElement.scrollHeight - innerHeight; progEl.style.transform = "scaleX(" + (h > 0 ? Math.min(1, scrollY / h) : 0).toFixed(4) + ")"; }
+  var pH = 1; function pMeasure(){ pH = Math.max(1, document.documentElement.scrollHeight - innerHeight); } addEventListener("resize", pMeasure); addEventListener("load", pMeasure); setTimeout(pMeasure, 1500); pMeasure();
+  function progUpd(){ pTick = false; progEl.style.transform = "scaleX(" + Math.min(1, scrollY / pH).toFixed(4) + ")"; }
   addEventListener("scroll", function(){ if (!pTick){ pTick = true; requestAnimationFrame(progUpd); } }, {passive: true}); progUpd();
 
   // a soft light follows the mouse
