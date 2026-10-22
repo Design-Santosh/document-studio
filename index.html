@@ -61,7 +61,9 @@
   "Gantt chart maker",
   "Flowchart maker (Mermaid)",
   "Export to PDF, Word, Markdown and PNG",
-  "Themes and colour palettes"
+  "Themes and colour palettes",
+  "MLA 9, APA 7, Chicago and Harvard formatting for essays",
+  "Citation helper with in-text citations and footnotes"
  ],
  "isAccessibleForFree": true
 }
@@ -923,6 +925,66 @@ footer{background:none; border-top:1px solid var(--line);}
   *, *::before, *::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important;}
   .rv, h1 .ch{opacity:1; translate:none; clip-path:none;} .win{transform:none;}
 }
+
+/* ===== Essays & papers: one paper that re-formats itself in MLA, APA, Chicago and Harvard ===== */
+.ess{display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.15fr); gap:64px; align-items:center; margin-top:56px;}
+.ess .txt h3{font:700 clamp(26px, 3vw, 34px)/1.15 var(--serif); margin:10px 0 14px;}
+.ess .txt p{color:var(--muted); font-size:17px; margin:0 0 22px;}
+.gtabs{position:relative; display:inline-grid; grid-template-columns:repeat(4, auto); gap:4px; padding:5px; border-radius:14px; background:var(--glass); border:1px solid var(--line2); box-shadow:var(--shadow);}
+.gtabs button{all:unset; position:relative; z-index:1; cursor:pointer; padding:9px 16px; border-radius:10px; font:600 14px var(--sans); color:var(--muted); text-align:center; transition:color .3s;}
+.gtabs button.on{color:#fff;}
+.gtabs button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.gtabs .hl{position:absolute; top:5px; left:0; height:calc(100% - 10px); border-radius:10px; background:linear-gradient(135deg, var(--accent-hi), var(--accent-deep)); box-shadow:0 8px 20px rgb(var(--a-rgb) / .35);
+  transition:transform .55s var(--spring), width .55s var(--spring); pointer-events:none;}
+.gnote{margin:14px 0 0; min-height:48px; font-size:15px; color:var(--ink2); transition:opacity .25s;}
+.gnote.sw{opacity:0;}
+.ess .ticks{margin-top:22px;}
+.desk2{--sw:320px; position:relative; margin-left:40px; height:calc(var(--sw) * 1.294 + 40px); display:grid; place-items:center;}
+.sh{position:absolute; width:var(--sw); height:calc(var(--sw) * 1.294); border-radius:4px; background:#fff; color:#111; overflow:hidden;
+  box-shadow:0 1px 2px rgba(15,31,25,.08), 0 14px 34px rgba(15,31,25,.12), 0 34px 70px rgba(15,31,25,.10);
+  transition:transform .8s var(--spring), opacity .45s var(--ease);}
+.sh .pad{position:absolute; inset:34px 38px; font:9.6px/1 "Times New Roman", Times, Georgia, serif; transition:opacity .2s;}
+.sh .pad.sw{opacity:0;}
+.sh.main{z-index:3;}
+.sh.tp{z-index:1; transform:translate3d(-21%, 22px, 0) rotate(-6deg); opacity:1;}
+.sh.rf{z-index:2; transform:translate3d(30%, 30px, 0) rotate(5deg);}
+.ess[data-s="mla9"] .sh.tp{transform:translate3d(-8%, 40px, 0) rotate(-2deg); opacity:0;}
+.ess.hov .sh.rf{transform:translate3d(40%, 18px, 0) rotate(7deg);}
+.ess.hov .sh.tp{transform:translate3d(-26%, 10px, 0) rotate(-8deg);}
+.ess[data-s="mla9"].hov .sh.tp{transform:translate3d(-8%, 40px, 0) rotate(-2deg);}
+/* the text page */
+.pn{position:absolute; top:16px; right:38px; font:9.6px/1 "Times New Roman", Times, serif; transition:transform .7s var(--spring), opacity .3s; z-index:2;}
+.ess[data-s="harvard"] .pn{transform:translate3d(0, calc(var(--sw) * 1.294 - 40px), 0);}
+.hb{display:grid; gap:0; transition:opacity .3s;} .hb span{display:block; line-height:2.1;}
+.ttl{text-align:center; line-height:2.1;}
+.bd p{margin:0; text-indent:22px; line-height:2.1;}
+.ess[data-s="harvard"] .pad{font-family:Arial, Helvetica, sans-serif; font-size:9px;}
+.ess[data-s="harvard"] .bd p{text-indent:0; line-height:1.6; margin-bottom:9px;}
+.ess[data-s="apa7"] .ttl, .sh.tp .t1{font-weight:700;}
+.cite{display:inline-block; text-indent:0; padding:0 2px; border-radius:3px; background:rgb(var(--g-rgb) / .35); animation:citeIn 1.4s var(--ease);}
+@keyframes citeIn{0%{background:rgb(var(--a-rgb) / .55); transform:translate3d(0,-3px,0);} 100%{background:rgb(var(--g-rgb) / .35);}}
+sup.cite{font-size:.7em; vertical-align:super; line-height:0;}
+.fnote{position:absolute; left:0; right:0; bottom:0; padding-top:6px; border-top:1px solid #111; width:40%; font-size:8px; line-height:1.4; white-space:nowrap;}
+.fnote span{display:block; width:260%; white-space:normal;}
+/* title page and source list */
+.sh.tp .pad{display:flex; flex-direction:column; align-items:center; text-align:center;}
+.sh.tp .t1{margin-top:28%; line-height:2;}
+.sh.tp .who{margin-top:10px; line-height:2;} .ess[data-s="chicago"] .sh.tp .who, .ess[data-s="harvard"] .sh.tp .who{margin-top:auto; margin-bottom:22%;}
+.ess[data-s="harvard"] .sh.tp .pad{font-family:Arial, Helvetica, sans-serif;} .ess[data-s="harvard"] .sh.tp .t1{font-size:12px; font-weight:700;}
+.rh{text-align:center; line-height:2.1; margin-bottom:2px;} .ess[data-s="apa7"] .rh{font-weight:700;} .ess[data-s="harvard"] .rh{text-align:left; font-weight:700;}
+.ren{padding-left:20px; text-indent:-20px; line-height:2.1;} .ess[data-s="chicago"] .ren{line-height:1.25; margin-bottom:10px;}
+.ess[data-s="harvard"] .ren{padding-left:0; text-indent:0; line-height:1.6; margin-bottom:8px;} .ess[data-s="harvard"] .sh.rf .pad{font-family:Arial, Helvetica, sans-serif; font-size:8.6px;}
+.ren:nth-child(2){animation-delay:.08s;} .ren:nth-child(3){animation-delay:.16s;} .ren:nth-child(4){animation-delay:.24s;}
+.pad:not(.sw) .ren{animation:renIn .6s var(--ease) both;} @keyframes renIn{from{opacity:0; transform:translate3d(10px,0,0);} to{opacity:1; transform:none;}}
+.gbadge{position:absolute; z-index:4; left:calc(50% - var(--sw) / 2 - 18px); bottom:6px; display:flex; align-items:center; gap:8px; padding:9px 14px; border-radius:99px; background:var(--paper); border:1px solid var(--line2);
+  box-shadow:var(--shadow-lg); font:600 13px var(--sans); color:var(--ink2);}
+.gbadge i{width:20px; height:20px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(135deg, var(--accent-hi), var(--accent-deep)); color:#fff; font-style:normal; font-size:12px;}
+.gbadge.pop{animation:gbPop .7s var(--spring);} @keyframes gbPop{0%{transform:scale(.7); opacity:0;} 100%{transform:none; opacity:1;}}
+.gname{position:absolute; z-index:4; right:calc(50% - var(--sw) / 2 - 10px); top:-4px; padding:6px 12px; border-radius:99px; font:700 12px var(--sans); letter-spacing:.06em; color:#fff;
+  background:linear-gradient(135deg, var(--accent-hi), var(--accent-deep)); box-shadow:0 10px 24px rgb(var(--a-rgb) / .35);}
+@media (max-width:900px){ .desk2{margin-left:0;} .ess{grid-template-columns:1fr; gap:30px;} .ess .txt{text-align:center;} .ess .ticks{display:inline-grid; text-align:left;} .desk2{--sw:min(300px, 66vw); margin-top:10px;} }
+@media (max-width:480px){ .gtabs button{padding:8px 11px; font-size:13px;} .sh.tp{transform:translate3d(-22%, 22px, 0) rotate(-5deg);} .sh.rf{transform:translate3d(24%, 30px, 0) rotate(4deg);} .sh .pad{inset:26px 26px; font-size:8px;} }
+@media (prefers-reduced-motion: reduce){ .sh, .pn, .gtabs .hl{transition:none;} .cite, .ren, .gbadge.pop{animation:none;} }
 </style>
 <script>try{ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("intro-on"); }catch(e){}</script>
 </head>
@@ -1127,9 +1189,40 @@ footer{background:none; border-top:1px solid var(--line);}
       <h2 class="rv" style="--d:.08s">Whatever you're working on.</h2>
     </div>
     <div class="made">
-      <div class="mcard rv"><div class="em">🎓</div><h4>Students</h4><p>Assignments, reports and a CV that stand out — with charts, equations and footnotes built in.</p><div class="chips"><button type="button" data-open="report">Report</button><button type="button" data-open="cv">CV / résumé</button><button type="button" data-open="plan">Project plan</button></div></div>
+      <div class="mcard rv"><div class="em">🎓</div><h4>Students</h4><p>Assignments, essays and a CV that stand out — MLA, APA, Chicago and Harvard formatting, citations, charts and footnotes built in.</p><div class="chips"><button type="button" data-open="report">Report</button><button type="button" data-open="cv">CV / résumé</button><button type="button" data-open="plan">Project plan</button></div></div>
       <div class="mcard rv" style="--d:.08s"><div class="em">💼</div><h4>Small businesses</h4><p>Invoices that add up for you, quotations, letters and meeting minutes — on brand, every time.</p><div class="chips"><button type="button" data-open="invoice">Invoice</button><button type="button" data-open="proposal">Proposal</button><button type="button" data-open="letter">Letter</button><button type="button" data-open="minutes">Minutes</button></div></div>
       <div class="mcard rv" style="--d:.16s"><div class="em">🛠️</div><h4>Engineers</h4><p>Test reports, specifications, review records and checklists with PASS / FAIL badges and revision tables.</p><div class="chips"><button type="button" data-open="test">Test report</button><button type="button" data-open="spec">Specification</button><button type="button" data-open="review">Review record</button><button type="button" data-open="checklist">Checklist</button></div></div>
+    </div>
+  </section>
+
+
+  <section class="wrap" id="essays">
+    <div class="head">
+      <div class="eyebrow rv">New · essays &amp; papers</div>
+      <h2 class="rv" style="--d:.08s">Your essay, in the right style. <span class="grad">In one click.</span></h2>
+      <p class="rv" style="--d:.16s">Pick MLA, APA, Chicago or Harvard — the whole paper is formatted for you: title page, font, spacing, margins, page numbers and the reference list.</p>
+    </div>
+    <div class="ess" id="ess" data-s="mla9">
+      <div class="txt rv l">
+        <div class="eyebrow">Style guides</div>
+        <h3>Switch styles. Your words stay the same.</h3>
+        <div class="gtabs" role="tablist" aria-label="Style guide">
+          <span class="hl" aria-hidden="true"></span>
+          <button type="button" role="tab" data-g="mla9" class="on" aria-selected="true">MLA 9</button>
+          <button type="button" role="tab" data-g="apa7" aria-selected="false">APA 7</button>
+          <button type="button" role="tab" data-g="chicago" aria-selected="false">Chicago</button>
+          <button type="button" role="tab" data-g="harvard" aria-selected="false">Harvard</button>
+        </div>
+        <p class="gnote" id="gnote" aria-live="polite"></p>
+        <ul class="ticks"><li><span>Cite a book, website, journal or chapter — the entry and the in-text citation are written for you</span></li><li><span>Chicago footnotes, numbered automatically</span></li><li><span><b>Check my format</b> lists anything that's off, with Fix all</span></li><li><span>Save as Word or PDF, already formatted</span></li></ul>
+      </div>
+      <div class="desk2 rv r" id="desk2" aria-hidden="true">
+        <div class="sh tp"><div class="pad" id="g-tp"></div></div>
+        <div class="sh rf"><div class="pad" id="g-rf"></div></div>
+        <div class="sh main"><span class="pn" id="g-pn">Mehta 1</span><div class="pad" id="g-main"></div></div>
+        <span class="gname" id="g-name">MLA 9</span>
+        <span class="gbadge" id="g-badge"><i>✓</i><span>9 of 9 checks passed</span></span>
+      </div>
     </div>
   </section>
 
@@ -1272,6 +1365,7 @@ footer{background:none; border-top:1px solid var(--line);}
     <div class="faq">
       <details class="rv"><summary>Is it really free?</summary><div class="a"><p>Yes. No trial, no subscription, no ads and no sign-up.</p></div></details>
       <details class="rv"><summary>Where do I download it?</summary><div class="a"><p>From the Microsoft Store — click <b>Get it from Microsoft</b> on this page. It installs in one click, is checked by Microsoft, and shows no security warnings.</p></div></details>
+      <details class="rv"><summary>Can it format my essay in MLA or APA?</summary><div class="a"><p>Yes — open your essay (Word, PDF or a new document), choose <b>Format → Style guide</b> and pick MLA 9, APA 7, Chicago or Harvard. It sets the title page, font, spacing, margins and page numbers, and builds the reference list. <b>Cite a source</b> writes each entry and the in-text citation for you, and <b>Check my format</b> lists anything left to fix.</p></div></details>
       <details class="rv"><summary>How do I get updates?</summary><div class="a"><p>Automatically. The Microsoft Store keeps Document Studio up to date in the background — your documents and settings stay as they are.</p></div></details>
       <details class="rv"><summary>Does it need the internet?</summary><div class="a"><p>No. Everything — including text recognition on scanned PDFs and flowchart drawing — runs on your PC. Your documents are never uploaded anywhere.</p></div></details>
       <details class="rv"><summary>Do I need Microsoft Office?</summary><div class="a"><p>Not for most things. Creating documents, editing PDFs, OCR, Gantt charts, flowcharts and exporting to PDF, Word, Markdown or pictures all work without it.</p><p>Converting Word, Excel or PowerPoint files, and “Edit as document” for PDFs, use Microsoft Office if it's installed on your PC.</p></div></details>
@@ -1892,6 +1986,74 @@ footer{background:none; border-top:1px solid var(--line);}
     var r = a.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2);
     thanks.classList.add("show"); clearTimeout(tTimer); tTimer = setTimeout(function(){ thanks.classList.remove("show"); }, 4200);
   });
+})();
+
+/* essays & papers: the same paper in four styles */
+(function(){
+  var ess = document.getElementById("ess"); if (!ess) return;
+  var calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var B1 = "Coastal cities face rising seas, stronger storms and saltwater reaching their fresh water. Planners now treat these risks as certain, and budgets are changing to match";
+  var B2 = "Mumbai offers a clear example. Its mangroves absorb storm surges, yet many have been cleared for construction.";
+  var S = {
+    mla9: {name: "MLA 9", pn: "Mehta 1", head: true, title: true, cite: " <span class=\"cite\">(Ghosh 45)</span>.", foot: "", refs: "Works Cited", checks: "9 of 9",
+      tp: "", note: "Your name, instructor, course and date top-left, the title centred, your last name and the page number on every page.",
+      list: ["Ghosh, Amitav. <i>The Great Derangement</i>. U of Chicago P, 2016.", "Patel, Nisha. <i>Rising Tides</i>. Penguin India, 2022.", "“Sea Level Rise in Mumbai.” <i>BBC News</i>, 14 June 2023, www.bbc.com/news."]},
+    apa7: {name: "APA 7", pn: "2", head: false, title: true, cite: " <span class=\"cite\">(Ghosh, 2016, p. 45)</span>.", foot: "", refs: "References", checks: "9 of 9",
+      tp: "<span class=\"t1\">Climate Change and Coastal Cities</span><span class=\"who\">Rahul Mehta<br>Department of English, University of Mumbai<br>English 102<br>Dr. Anita Kulkarni<br>October 21, 2026</span>",
+      note: "A title page, page numbers top-right, the bold title again on page 2, and References with hanging indents.",
+      list: ["Ghosh, A. (2016). <i>The great derangement</i>. University of Chicago Press.", "Patel, N. (2022). <i>Rising tides</i>. Penguin India.", "<i>Sea level rise in Mumbai</i>. (2023, June 14). BBC News. https://www.bbc.com/news"]},
+    chicago: {name: "Chicago", pn: "2", head: false, title: false, cite: ".<sup class=\"cite\">1</sup>", foot: "<span>1. Amitav Ghosh, <i>The Great Derangement</i> (University of Chicago Press, 2016), 45.</span>", refs: "Bibliography", checks: "10 of 10",
+      tp: "<span class=\"t1\">Climate Change and Coastal Cities</span><span class=\"who\">Rahul Mehta<br>English 102<br>Dr. Anita Kulkarni<br>October 21, 2026</span>",
+      note: "Notes and bibliography: a title page, numbered footnotes for your sources, and a Bibliography at the end.",
+      list: ["Ghosh, Amitav. <i>The Great Derangement</i>. University of Chicago Press, 2016.", "Patel, Nisha. <i>Rising Tides</i>. Penguin India, 2022.", "“Sea Level Rise in Mumbai.” BBC News, June 14, 2023."]},
+    harvard: {name: "Harvard", pn: "2", head: false, title: false, cite: " <span class=\"cite\">(Ghosh, 2016, p. 45)</span>.", foot: "", refs: "Reference list", checks: "9 of 9",
+      tp: "<span class=\"t1\">Climate Change and Coastal Cities</span><span class=\"who\">Rahul Mehta<br>English 102<br>Dr. Anita Kulkarni<br>21 October 2026</span>",
+      note: "A cover page, 1.5 line spacing on A4, page numbers at the bottom, and an A–Z Reference list.",
+      list: ["Ghosh, A. (2016) <i>The great derangement</i>. Chicago: University of Chicago Press.", "Patel, N. (2022) <i>Rising tides</i>. New Delhi: Penguin India.", "<i>Sea level rise in Mumbai</i> (2023) Available at: bbc.com/news (Accessed: 21 October 2026)."]}
+  };
+  var tabs = ess.querySelectorAll("[data-g]"), hl = ess.querySelector(".gtabs .hl"), main = document.getElementById("g-main"), tp = document.getElementById("g-tp"), rf = document.getElementById("g-rf");
+  var pn = document.getElementById("g-pn"), note = document.getElementById("gnote"), badge = document.getElementById("g-badge"), nm = document.getElementById("g-name"), cur = "mla9", timer = 0, user = false, swapT = 0;
+  function render(k){
+    var g = S[k];
+    main.innerHTML = (g.head ? '<div class="hb"><span>Rahul Mehta</span><span>Dr. Anita Kulkarni</span><span>English 102</span><span>21 October 2026</span></div>' : "") +
+      (g.title ? '<div class="ttl">Climate Change and Coastal Cities</div>' : "") +
+      '<div class="bd"><p>' + B1 + g.cite + "</p><p>" + B2 + "</p></div>" + (g.foot ? '<div class="fnote">' + g.foot + "</div>" : "");
+    tp.innerHTML = g.tp;
+    rf.innerHTML = '<div class="rh">' + g.refs + "</div>" + g.list.map(function(x){ return '<div class="ren">' + x + "</div>"; }).join("");
+    pn.textContent = g.pn; nm.textContent = g.name; note.textContent = g.note;
+    badge.querySelector("span").textContent = g.checks + " checks passed";
+  }
+  function moveHl(){ var b = ess.querySelector(".gtabs .on"); if (!b) return; hl.style.width = b.offsetWidth + "px"; hl.style.transform = "translateX(" + b.offsetLeft + "px)"; }
+  function go(k){
+    if (k === cur) return; cur = k;
+    tabs.forEach(function(b){ var on = b.getAttribute("data-g") === k; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+    moveHl();
+    [main, tp, rf].forEach(function(p){ p.classList.add("sw"); }); note.classList.add("sw");
+    clearTimeout(swapT);
+    swapT = setTimeout(function(){
+      ess.setAttribute("data-s", k); render(k);
+      [main, tp, rf].forEach(function(p){ p.classList.remove("sw"); }); note.classList.remove("sw");
+      badge.classList.remove("pop"); void badge.offsetWidth; badge.classList.add("pop");
+    }, calm ? 0 : 200);
+  }
+  tabs.forEach(function(b){ b.addEventListener("click", function(){ user = true; clearInterval(timer); go(b.getAttribute("data-g")); }); });
+  ess.addEventListener("keydown", function(e){
+    if (!/^Arrow(Left|Right)$/.test(e.key) || !e.target.closest(".gtabs")) return;
+    var ks = Object.keys(S), i = (ks.indexOf(cur) + (e.key === "ArrowRight" ? 1 : ks.length - 1)) % ks.length;
+    user = true; clearInterval(timer); go(ks[i]); ess.querySelector('[data-g="' + ks[i] + '"]').focus();
+  });
+  var desk = document.getElementById("desk2");
+  desk.addEventListener("pointerenter", function(e){ if (e.pointerType !== "touch") ess.classList.add("hov"); });
+  desk.addEventListener("pointerleave", function(){ ess.classList.remove("hov"); });
+  render(cur); requestAnimationFrame(moveHl); addEventListener("resize", moveHl, {passive: true});
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveHl);
+  // while it is on screen (and nobody has picked a style yet), it shows each style in turn
+  if (!calm) new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      clearInterval(timer);
+      if (e.isIntersecting && !user) timer = setInterval(function(){ var ks = Object.keys(S); go(ks[(ks.indexOf(cur) + 1) % ks.length]); }, 3600);
+    });
+  }, {threshold: .45}).observe(ess);
 })();
 </script>
 </body>
